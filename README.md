@@ -26,13 +26,25 @@ SERVER_PORT=3000
 MYSQL_PORT=3306
 USER=seu_usuario
 PASSWORD=sua_senha
-DB_NAME=opentelemetry_test
+DB_NAME=otel
 ```
 
 4. Configure o banco de dados:
 
 - Certifique-se de que o MySQL está rodando
-- Crie o banco de dados especificado em `DB_NAME`
+- Execute o arquivo SQL para criar o banco e importar os dados:
+
+```bash
+mysql -u seu_usuario -p < database-otel-test-api.sql
+```
+
+Ou importe manualmente o arquivo `database-otel-test-api.sql` no seu cliente MySQL.
+
+O arquivo SQL contém:
+
+- Criação do banco de dados `otel`
+- Criação das tabelas: `users`, `products`, `configs`
+- Dados de exemplo (100+ produtos, usuários e configurações)
 
 ## Executar
 
