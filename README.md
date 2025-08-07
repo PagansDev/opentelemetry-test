@@ -1,53 +1,67 @@
-# OpenTelemetry Test - Servidor com MySQL
+# OpenTelemetry Test API
 
-Servidor Express.js com Sequelize e MySQL para testes de OpenTelemetry.
+API REST desenvolvida com Express.js, Sequelize e MySQL para testes de instrumentação OpenTelemetry.
 
-## 🚀 Configuração
+## Pré-requisitos
 
-### Pré-requisitos
+- Node.js 16+
+- MySQL 8.0+
+- npm
 
-- Node.js
-- MySQL Server
-- npm ou yarn
+## Instalação
 
-### Instalação
-
-1. **Instalar dependências:**
+1. Clone o repositório
+2. Instale as dependências:
 
 ```bash
 npm install
 ```
 
-2. **Configurar variáveis de ambiente:**
-   Crie um arquivo `.env` na raiz do projeto:
+3. Configure as variáveis de ambiente:
+
+Crie um arquivo `.env` na raiz do projeto:
 
 ```env
-DATABASE_URL=http://localhost/
-PORT=3306
+SERVER_PORT=3000
+MYSQL_PORT=3306
 USER=seu_usuario
 PASSWORD=sua_senha
-DB_NAME=seu_banco
+DB_NAME=opentelemetry_test
 ```
 
-3. **Configurar banco de dados:**
+4. Configure o banco de dados:
 
 - Certifique-se de que o MySQL está rodando
-- Crie um banco de dados (ou ajuste o DB_NAME no .env)
+- Crie o banco de dados especificado em `DB_NAME`
 
-4. **Executar o servidor:**
+## Executar
 
 ```bash
 npm start
 ```
 
-## 📊 Estrutura do Banco de Dados
+O servidor estará disponível em `http://localhost:3000`
+
+## Estrutura do Projeto
+
+```
+src/
+├── controllers/     # Lógica de negócio
+├── models/         # Schemas das entidades
+├── otel/          # Configuração OpenTelemetry (futura)
+├── db.js          # Configuração do banco
+├── index.js       # Servidor principal
+├── routes.js      # Definição de rotas
+└── swagger.js     # Configuração Swagger
+```
+
+## Banco de Dados
 
 ### Tabela `users`
 
 - `id` (INT, AUTO_INCREMENT, PRIMARY KEY)
 - `name` (VARCHAR(55), NOT NULL)
-- `createdAt` (DATETIME, DEFAULT CURRENT_TIMESTAMP)
-- `updatedAt` (DATETIME, DEFAULT CURRENT_TIMESTAMP)
+- `createdAt`, `updatedAt` (DATETIME)
 
 ### Tabela `products`
 
@@ -57,90 +71,64 @@ npm start
 - `description` (VARCHAR(255))
 - `isAvailable` (TINYINT(1), DEFAULT 1)
 - `deleted` (TINYINT(1), DEFAULT 0)
-- `createdAt` (DATETIME, DEFAULT CURRENT_TIMESTAMP)
-- `updatedAt` (DATETIME, DEFAULT CURRENT_TIMESTAMP)
+- `createdAt`, `updatedAt` (DATETIME)
 
 ### Tabela `configs`
 
 - `id` (INT, AUTO_INCREMENT, PRIMARY KEY)
 - `key` (VARCHAR(255))
 - `value` (VARCHAR(255))
-- `createdAt` (DATETIME, DEFAULT CURRENT_TIMESTAMP)
-- `updatedAt` (DATETIME, DEFAULT CURRENT_TIMESTAMP)
+- `createdAt`, `updatedAt` (DATETIME)
 
-## 📚 Documentação da API
+## API Endpoints
 
-A API está documentada com Swagger/OpenAPI 3.0. Acesse a documentação interativa em:
+### Status
 
-**http://localhost:3000/api-docs**
+- `GET /` - Status do servidor
+- `GET /health` - Health check com verificação de banco
 
-## 🔌 Endpoints da API
+### Usuários
 
-### Health Check
+- `GET /api/users` - Listar usuários
+- `POST /api/users` - Criar usuário
 
-- **GET** `/health` - Status do servidor e conexão com banco
+### Produtos
 
-### Users
+- `GET /api/products` - Listar produtos ativos
+- `POST /api/products` - Criar produto
+- `GET /api/products/performance-test` - Endpoint de teste de performance
 
-- **GET** `/api/users` - Listar todos os usuários
-- **POST** `/api/users` - Criar novo usuário
-  ```json
-  {
-    "name": "Nome do Usuário"
-  }
-  ```
+### Configurações
 
-### Products
+- `GET /api/configs` - Listar configurações
+- `POST /api/configs` - Criar configuração
 
-- **GET** `/api/products` - Listar produtos disponíveis (não deletados)
-- **POST** `/api/products` - Criar novo produto
-  ```json
-  {
-    "name": "Nome do Produto",
-    "price": 100,
-    "description": "Descrição opcional",
-    "isAvailable": 1
-  }
-  ```
+### Teste de Performance
 
-### Configs
+O endpoint `/api/products/performance-test` possui comportamento dinâmico:
 
-- **GET** `/api/configs` - Listar todas as configurações
-- **POST** `/api/configs` - Criar nova configuração
-  ```json
-  {
-    "key": "chave_config",
-    "value": "valor_config"
-  }
-  ```
+- **1ª chamada**: Resposta otimizada (rápida)
+- **2ª chamada**: Processamento pesado (lenta)
+- **3ª chamada**: Retorna 404 e reseta o contador
 
-## 🛠️ Scripts Disponíveis
+Endpoints auxiliares:
 
-- `npm start` - Inicia o servidor
-- `npm run dev` - Inicia o servidor (alias para start)
+- `POST /api/products/performance-test/reset` - Resetar contador
+- `GET /api/products/performance-test/status` - Status do contador
 
-## 📚 Documentação Swagger
+## Documentação
 
-A documentação da API inclui:
+Acesse a documentação Swagger interativa em:
+`http://localhost:3000/api-docs`
 
-- **Esquemas completos** para todos os modelos (User, Product, Config)
-- **Exemplos de requisição** para todos os endpoints
-- **Códigos de resposta** detalhados
-- **Validações** e tipos de dados
-- **Interface interativa** para testar a API
+## Scripts
 
-## 📝 Logs
+- `npm start` - Iniciar servidor
+- `npm run dev` - Iniciar servidor (desenvolvimento)
 
-O servidor registra automaticamente:
+## Configurações
 
-- Todas as requisições HTTP
-- Conexão com banco de dados
-- Sincronização de modelos
-- Inserção de dados de exemplo
-
-## 🔧 Configurações
-
-- **Porta do servidor:** 3000 (configurável via variável de ambiente)
-- **Porta do MySQL:** 3306 (fixa)
-- **Timezone:** -03:00 (Brasil)
-- **Logging:** Ativado para todas as queries SQL
+- **Servidor**: Porta 3000 (configurável via `SERVER_PORT`)
+- **MySQL**: Porta 3306 (configurável via `MYSQL_PORT`)
+- **Timezone**: -03:00 (Brasil)
+- **Logging**: Desabilitado para queries SQL
