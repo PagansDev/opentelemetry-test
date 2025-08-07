@@ -3,6 +3,7 @@ const HealthController = require('./controllers/healthController');
 const UserController = require('./controllers/userController');
 const ProductController = require('./controllers/productController');
 const ConfigController = require('./controllers/configController');
+const MetricsController = require('./controllers/metricsController');
 
 const router = express.Router();
 
@@ -272,6 +273,56 @@ router.post('/api/configs', ConfigController.createConfig);
 
 /**
  * @swagger
+ * /api/metrics/system:
+ *   get:
+ *     summary: Métricas do sistema
+ *     description: Retorna métricas de CPU, memória e recursos do servidor
+ *     tags: [Métricas]
+ *     responses:
+ *       200:
+ *         description: Métricas coletadas com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 timestamp:
+ *                   type: string
+ *                   format: date-time
+ *                 metrics:
+ *                   type: object
+ *                   properties:
+ *                     memory:
+ *                       type: object
+ *                       properties:
+ *                         rss:
+ *                           type: number
+ *                           description: Memória RSS em MB
+ *                         heapUsed:
+ *                           type: number
+ *                           description: Heap usado em MB
+ *                     cpu:
+ *                       type: object
+ *                       properties:
+ *                         cores:
+ *                           type: number
+ *                           description: Número de cores da CPU
+ *                         loadAverage:
+ *                           type: array
+ *                           items:
+ *                             type: number
+ *                           description: Load average (1m, 5m, 15m)
+ *                 health:
+ *                   type: object
+ *                   properties:
+ *                     status:
+ *                       type: string
+ *                       enum: [healthy, warning, critical]
+ */
+router.get('/api/metrics/system', MetricsController.getSystemMetrics);
+
+/**
+ * @swagger
  * /api/products/performance-test:
  *   get:
  *     summary: Endpoint de teste de performance
@@ -310,8 +361,6 @@ router.post('/api/configs', ConfigController.createConfig);
  *               $ref: '#/components/schemas/Error'
  */
 router.get('/api/products/performance-test', ProductController.performanceTest);
-
-// Rotas extras para gerenciamento do contador (útil para testes)
 /**
  * @swagger
  * /api/products/performance-test/reset:

@@ -1,3 +1,4 @@
+require('./otel/tracing');
 require('dotenv').config();
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
@@ -34,7 +35,6 @@ async function startServer() {
   try {
     await sequelize.authenticate();
     await sequelize.sync({ alter: true });
-    console.log('Banco conectado');
 
     app.listen(PORT, () => {
       console.log(`Servidor rodando na porta ${PORT}`);
