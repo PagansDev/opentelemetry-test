@@ -42,13 +42,29 @@ npm start
 
 O servidor estará disponível em `http://localhost:3000`
 
+## OpenTelemetry e Jaeger
+
+Para visualizar os traces e métricas:
+
+1. Execute o Jaeger via Docker:
+
+```bash
+docker run --rm --name jaeger -p 16686:16686 -p 4317:4317 -p 4318:4318 -p 5778:5778 -p 9411:9411 cr.jaegertracing.io/jaegertracing/jaeger:2.8.0
+```
+
+2. Acesse o Jaeger UI em: `http://localhost:16686`
+
+3. Selecione o serviço `opentelemetry-test-api` para visualizar os traces
+
+O OpenTelemetry está configurado para enviar traces para o Jaeger na porta 4318.
+
 ## Estrutura do Projeto
 
 ```
 src/
 ├── controllers/     # Lógica de negócio
 ├── models/         # Schemas das entidades
-├── otel/          # Configuração OpenTelemetry (futura)
+├── otel/          # Configuração OpenTelemetry
 ├── db.js          # Configuração do banco
 ├── index.js       # Servidor principal
 ├── routes.js      # Definição de rotas
@@ -97,6 +113,10 @@ src/
 - `GET /api/products` - Listar produtos ativos
 - `POST /api/products` - Criar produto
 - `GET /api/products/performance-test` - Endpoint de teste de performance
+
+### Métricas
+
+- `GET /api/metrics/system` - Métricas do sistema (CPU, memória, etc.)
 
 ### Configurações
 
